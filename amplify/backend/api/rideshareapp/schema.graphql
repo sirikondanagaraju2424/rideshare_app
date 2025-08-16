@@ -1,0 +1,9 @@
+# This defines the Message data structure for your chat
+type Message @model @auth(rules: [{ allow: public, provider: apiKey }]) {
+  id: ID!
+  rideId: String! @index(name: "byRide", queryField: "messagesByRide")
+  messageText: String!
+  senderName: String
+  senderId: String
+  createdAt: AWSDateTime
+}
