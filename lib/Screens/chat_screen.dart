@@ -27,8 +27,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // --- Convenience Getters ---
   String get chatRoomID => widget.ride.rideId;
-  String get currentUsername => 'Nagaraj';
-  String get currentUserId => 'nagaraj-dev-123';
+  String get currentUsername => 'Sita';
+  String get currentUserId => 'sita-customer-456';
 
   @override
   void initState() {
