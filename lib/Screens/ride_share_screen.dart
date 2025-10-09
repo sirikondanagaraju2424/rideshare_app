@@ -1,5 +1,3 @@
-// lib/screens/ride_share_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:convert';
@@ -427,7 +425,7 @@ class _RideShareScreenState extends State<RideShareScreen> {
     // Parse and format date and time
     String month = "";
     String day = "";
-    String year = "";
+    // String year = ""; // No longer needed
     String formattedTime = "N/A";
 
     try {
@@ -441,7 +439,7 @@ class _RideShareScreenState extends State<RideShareScreen> {
             int.parse(dateParts[1]),
           )).toUpperCase();
           day = dateParts[1];
-          year = dateParts[2];
+          // year = dateParts[2]; // No longer needed
         }
       }
 
@@ -457,7 +455,7 @@ class _RideShareScreenState extends State<RideShareScreen> {
       // Handles parsing errors gracefully
       month = "ERR";
       day = "!";
-      year = "!";
+      // year = "!"; // No longer needed
       formattedTime = "Invalid";
     }
 
@@ -590,8 +588,8 @@ class _RideShareScreenState extends State<RideShareScreen> {
                     children: [
                       // Compact Calendar Widget
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 70, // Keep width for consistent spacing
+                        height: 70, // Adjusted height
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -632,14 +630,7 @@ class _RideShareScreenState extends State<RideShareScreen> {
                                 color: Colors.black87,
                               ),
                             ),
-                            Text(
-                              year.isNotEmpty ? year : '----',
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
+                            // Removed the year text widget
                             const Spacer(),
                           ],
                         ),
@@ -647,8 +638,8 @@ class _RideShareScreenState extends State<RideShareScreen> {
                       const SizedBox(width: 12),
                       // Compact Clock Widget
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 60, // Decreased width
+                        height: 60, // Decreased height
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -660,13 +651,13 @@ class _RideShareScreenState extends State<RideShareScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.access_time, size: 20, color: Colors.orange),
-                            const SizedBox(height: 4),
+                            const Icon(Icons.access_time, size: 18, color: Colors.orange), // Decreased icon size
+                            const SizedBox(height: 2), // Decreased spacing
                             Text(
                               formattedTime,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 12, // Decreased font size
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),

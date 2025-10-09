@@ -372,4 +372,4 @@ class _PostRideScreenState extends State<PostRideScreen> {
       ),
     );
   }
-}
+} 
