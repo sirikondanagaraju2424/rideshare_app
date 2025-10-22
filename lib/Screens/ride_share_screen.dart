@@ -53,8 +53,44 @@ class _RideShareScreenState extends State<RideShareScreen> {
         throw Exception('Failed to load rides. Server returned status ${response.statusCode}');
       }
     } catch (e) {
+      if (e.toString().contains('Failed host lookup') || e.toString().contains('No address associated with hostname')) {
+        // Return demo data when server is not reachable
+        return _getDemoRides(rideTypeToFetch);
+      }
       throw Exception('Failed to process server response: $e');
     }
+  }
+
+  List<Ride> _getDemoRides(String rideType) {
+    final demoRides = <Map<String, dynamic>>[
+      {
+        'rideId': 'demo1',
+        'userId': 'DemoUser1',
+        'startLocation': 'Downtown',
+        'endLocation': 'Airport',
+        'rideType': 'AVAILABLE',
+        'rideDate': '10/16/2025',
+        'rideTime': '2:00 PM',
+        'seatsAvailable': '3',
+        'moreInfo': 'Demo ride - server offline'
+      },
+      {
+        'rideId': 'demo2',
+        'userId': 'DemoUser2',
+        'startLocation': 'University',
+        'endLocation': 'Mall',
+        'rideType': 'NEEDED',
+        'rideDate': '10/16/2025',
+        'rideTime': '4:30 PM',
+        'seatsAvailable': '1',
+        'moreInfo': 'Demo ride - server offline'
+      },
+    ];
+    
+    return demoRides
+        .where((ride) => ride['rideType'] == rideType)
+        .map((data) => Ride.fromJson(data))
+        .toList();
   }
 
   void _refreshRides() {
@@ -246,7 +282,6 @@ class _RideShareScreenState extends State<RideShareScreen> {
               },
             ),
           ),
-          _buildPostRideButton(),
         ],
       ),
     );
@@ -329,6 +364,12 @@ class _RideShareScreenState extends State<RideShareScreen> {
         IconButton(
           icon: const Icon(Icons.search, color: Colors.black),
           onPressed: _showSearchDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.add, color: Colors.black),
+          onPressed: () {
+            context.push('/post_ride', extra: {'currentUserName': currentUserName});
+          },
         ),
       ],
     );
@@ -497,6 +538,29 @@ class _RideShareScreenState extends State<RideShareScreen> {
                     ),
                   ),
                   const Spacer(),
+                  // Ride Type Indicator
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _selectedToggleIndex == 2 
+                          ? Colors.blue.shade100 
+                          : (ride.rideType == 'AVAILABLE' ? Colors.green.shade100 : Colors.orange.shade100),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _selectedToggleIndex == 2 
+                          ? 'POSTED' 
+                          : (ride.rideType == 'AVAILABLE' ? 'AVAILABLE' : 'NEED'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: _selectedToggleIndex == 2 
+                            ? Colors.blue.shade800 
+                            : (ride.rideType == 'AVAILABLE' ? Colors.green.shade800 : Colors.orange.shade800),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(

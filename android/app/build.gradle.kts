@@ -17,7 +17,7 @@ val flutterVersionName: String = localProperties.getProperty("flutter.versionNam
 
 android {
     namespace = "com.example.rideshare_app"
-    compileSdk = 35
+    compileSdk = 36
     
     // FIX #2: THE NDK VERSION IS ADDED HERE
     ndkVersion = "27.0.12077973"

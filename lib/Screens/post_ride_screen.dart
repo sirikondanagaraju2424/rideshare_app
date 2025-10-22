@@ -80,9 +80,13 @@ class _PostRideScreenState extends State<PostRideScreen> {
       }
     } catch (e) {
       if (mounted) { 
+        String errorMessage = 'Error: $e';
+        if (e.toString().contains('Failed host lookup') || e.toString().contains('No address associated with hostname')) {
+          errorMessage = 'Unable to connect to server. Please check your internet connection and try again.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
           ),
         ); 
