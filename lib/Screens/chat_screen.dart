@@ -63,26 +63,36 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _fetchMessages() async {
     try {
+      // Use the auto-generated query with byRide index
       final request = ModelQueries.list(
         Message.classType,
         where: Message.RIDEID.eq(chatRoomID),
       );
       final response = await Amplify.API.query(request: request).response;
-      final messages = response.data?.items.whereType<Message>().toList();
+      
+      if (response.hasErrors) {
+        throw Exception('GraphQL errors: ${response.errors}');
+      }
+      
+      final messages = response.data?.items.whereType<Message>().toList() ?? [];
 
-      if (messages != null) {
-        // Safely sort messages, handling cases where createdAt might be null
-        messages.sort((a, b) => (a.createdAt ?? TemporalDateTime(DateTime(0)))
-            .compareTo(b.createdAt ?? TemporalDateTime(DateTime(0))));
-        if (mounted) {
-          setState(() {
-            _messages = messages;
-          });
-        }
+      // Sort messages by createdAt
+      messages.sort((a, b) {
+        final aTime = a.createdAt ?? TemporalDateTime(DateTime(0));
+        final bTime = b.createdAt ?? TemporalDateTime(DateTime(0));
+        return aTime.compareTo(bTime);
+      });
+      
+      if (mounted) {
+        setState(() {
+          _messages = messages;
+        });
       }
     } catch (e) {
       print('Error fetching messages: $e');
-      if (mounted) setState(() => _errorMessage = "Could not load messages.");
+      if (mounted) {
+        setState(() => _errorMessage = "Could not load messages: $e");
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -120,15 +130,28 @@ class _ChatScreenState extends State<ChatScreen> {
         senderId: currentUserId,
         senderName: currentUsername,
       );
+      
       final request = ModelMutations.create(newMessage);
-      await Amplify.API.mutate(request: request).response;
+      final response = await Amplify.API.mutate(request: request).response;
+      
+      if (response.hasErrors) {
+        throw Exception('GraphQL errors: ${response.errors}');
+      }
+      
       _messageController.clear();
       FocusScope.of(context).unfocus();
+      
+      // Message will be automatically added via subscription
+      print('Message sent successfully: ${response.data?.id}');
+      
     } catch (e) {
       print('Error sending message: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send message: ${e.toString()}')),
+          SnackBar(
+            content: Text('Failed to send message: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
